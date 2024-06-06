@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Weapon : MonoBehaviour
 {
     [SerializeField] Transform firePoint;
     [SerializeField] GameObject bulletImpact;
     [SerializeField] WeaponModel weaponModel;
-    [SerializeField] int magazine;
-
+    [SerializeField] int magazine, bullet, bulletMax;
     float fireTimer;
-
-    bool fire = false;
-
-    int contador;
+    bool onFire;
 
     private void Start()
     {
@@ -22,34 +20,61 @@ public class Weapon : MonoBehaviour
         MeshRenderer meshRenderer = GetComponentInChildren<MeshRenderer>();
         fireTimer = weaponModel.FireRate;
         magazine = weaponModel.MaganizeCap;
+        bullet = bulletMax;
     }
 
-    void Fire(bool crounchin)
+    private void Update()
     {
-        StartCoroutine(FireCoroutine(crounchin));
-    }
-
-    private IEnumerator FireCoroutine(bool crounchin)
-    {
-        if (Time.time > fireTimer) 
+        Fire();
+        if (Input.GetKey(KeyCode.Mouse0)) 
         {
-            fireTimer =  Time.time + 1 / weaponModel.FireRate;
+            onFire = true;
+        }
+        if (Input.GetKeyDown(KeyCode.R) && Time.time > weaponModel.ReloadTime && magazine < weaponModel.MaganizeCap)
+        {
+            StartCoroutine(ReloadCoroutine());
+        }
+    }
+    void Fire()
+    {
+        StartCoroutine(FireCoroutine());
+    }
 
-            for (int i = 0; i < weaponModel.BulletsForShoot; i++)
+    private IEnumerator FireCoroutine()
+    {
+        if (onFire && bullet >=1) 
+        {
+            fireTimer -= Time.deltaTime;
+            if (fireTimer <= 0)
             {
-                Shoot(crounchin);
-                yield return new WaitForSeconds(weaponModel.BulletsForShoot);
+                Shoot();
+                bullet = bullet - 1;
+                onFire = false;
+                yield return new WaitForSeconds(fireTimer);
+                fireTimer = weaponModel.FireRate;
             }
+            
         }
     }
 
-    void Shoot(bool crounching)
+    private IEnumerator ReloadCoroutine()
+    {
+        if (bullet <= 0)
+        {
+            magazine--;
+            yield return new WaitForSeconds(weaponModel.ReloadTime);
+            bullet = bulletMax;
+        }
+
+    }
+    void Shoot()
     {
         RaycastHit hit;
 
-        float newSpread = crounching ? weaponModel.Spread / 2 : weaponModel.Spread;
+        //float newSpread = crounching ? weaponModel.Spread / 2 : weaponModel.Spread;
 
-        Vector3 direction = new Vector3(Random.Range(-newSpread, newSpread), Random.Range(newSpread, newSpread),0) + transform.forward;
+        Vector3 direction = new Vector3(Random.Range(-weaponModel.Spread, weaponModel.Spread), 
+            Random.Range(-weaponModel.Spread, weaponModel.Spread),0) + transform.forward;
 
         if (Physics.Raycast(firePoint.position, direction,out hit, weaponModel.Range))
         {
@@ -63,3 +88,4 @@ public class Weapon : MonoBehaviour
         Debug.DrawLine(firePoint.position, firePoint.position + direction * weaponModel.Range);
     }
 }
+
