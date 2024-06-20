@@ -8,21 +8,27 @@ public class PlayerController : MonoBehaviour
     PlayerGravity playerGravity;
     [SerializeField] Transform camTransform;
     Weapon weapon;
-    Vector3 direction;
-    [SerializeField] Vector2 camDirection;
-    const float speed = 5;
+    Vector3 direction, camDirection;
+
+    const float speedbase = 5;
+    float speed;
+    bool run;
+
     float verticalRotation;
     bool shooting, crouching;
 
-    [SerializeField] GameObject grenade;
+    [SerializeField] GameObject grenadePrefab;
     [SerializeField] Transform throwPoint;
-
+    float throwForceUP = 5;
+    float throwForceForward = 5;
+   
     [SerializeField]
     [Range(1, 500)]
     float mouseSensitivity;
 
     private void Awake()
     {
+        speed = speedbase;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         characterController = GetComponent<CharacterController>();
@@ -42,32 +48,51 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
+            Debug.Log("space");
         }
 
         if (Input.GetKeyDown(KeyCode.G))
         {
             ThrowGrenade();
+            Debug.Log("G");
         }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
             crouching = !crouching;
             Crouch();
+            Debug.Log("c");
         }
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             weapon.Reload();
+            Debug.Log("R");
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             shooting = true;
+            Debug.Log("mouse esquerdo baixo");
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             shooting = false;
+            Debug.Log("mouse esquerdo cima");
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            speed = speedbase * 1.5f;
+            run = true;
+            Debug.Log("shift esquerdo baixo");
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            speed = speedbase;
+            run = false;
+            Debug.Log("shift esquerdo cima");
         }
 
         Movement();
@@ -102,7 +127,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        
+        playerGravity.Jump();
     }
 
     private void Crouch()
@@ -119,7 +144,12 @@ public class PlayerController : MonoBehaviour
 
     private void ThrowGrenade()
     {
-       
+        GameObject grenade = Instantiate(grenadePrefab, throwPoint.position, camTransform.rotation);
+
+        Vector3 throwForce = transform.up * throwForceUP + camTransform.forward * throwForceForward;
+        grenade.GetComponent<Rigidbody>().AddForce(throwForce, ForceMode.Impulse);
+
+        Destroy(grenade, 10);
     }
 }
 
