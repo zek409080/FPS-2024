@@ -33,7 +33,7 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    void Fire()
+    public void Fire()
     {
         StartCoroutine(FireCoroutine());
     }
@@ -72,6 +72,12 @@ public class Weapon : MonoBehaviour
             Instantiate(bulletImpact, hit.point, Quaternion.identity);
             // Desenha uma linha para visualizar o trajeto do projétil
             Debug.DrawLine(firePoint.position, direction * weaponData.Range);
+
+            IDamageable damageable = hit.transform.GetComponent<IDamageable>();
+            if(damageable != null)
+            {
+                damageable.TakeDamage(weaponData.Damage);
+            }
         }
     }
 
