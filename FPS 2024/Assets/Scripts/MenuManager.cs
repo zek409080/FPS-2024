@@ -1,13 +1,14 @@
 // Importa as bibliotecas necessárias para collections, Unity Engine e UI.
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 // Define a classe MenuManager que herda de MonoBehaviour, permitindo que seja usada como um componente em GameObjects.
 public class MenuManager : MonoBehaviour
 {
     // Define variáveis privadas que podem ser configuradas no Inspector do Unity.
     // Essas variáveis são referências para elementos de UI.
-    [SerializeField] Text nicknameUI, roomNameUI, playerList;
+    [SerializeField] TextMeshProUGUI nicknameUI, roomNameUI, playerList;
     [SerializeField] Button joinButton, createButton, leaveButton, startButton;
     [SerializeField] GameObject menu, lobby;
 
