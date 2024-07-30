@@ -1,6 +1,4 @@
 // Importa bibliotecas necessárias
-using System.Collections; // Para usar coleções não genéricas
-using System.Collections.Generic; // Para usar coleções genéricas
 using UnityEngine; // Para usar funcionalidades do Unity
 using Photon.Pun; // Para usar o Photon PUN (Photon Unity Networking)
 using Photon.Realtime; // Para usar funcionalidades em tempo real do Photon
@@ -51,7 +49,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = nickname; // Define o apelido do jogador
         PhotonNetwork.JoinRoom(roomName); // Tenta entrar na sala especificada
     }
-    /*
+    
     // Método para criar uma sala com um nome de sala e apelido
     public void CreateRoom(string roomName, string nickname)
     {
@@ -64,30 +62,30 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LeaveRoom(); // Sai da sala atual
     }
-
+    
     // Método chamado quando um jogador entra na sala
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+    public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log("Player " + newPlayer.NickName + " joined room"); // Loga uma mensagem no console
-        menuManager.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
+        MenuManager.instance.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
     }
 
     // Método chamado quando um jogador sai da sala
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         Debug.Log("Player " + otherPlayer.NickName + " left room"); // Loga uma mensagem no console
-        menuManager.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
-        menuManager.SetStartButton(PhotonNetwork.IsMasterClient); // Define o botão de iniciar se o jogador for o mestre da sala
+        MenuManager.instance.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
+        MenuManager.instance.SetStartButton(PhotonNetwork.IsMasterClient); // Define o botão de iniciar se o jogador for o mestre da sala
     }
-
+    
     // Método chamado quando o jogador entra na sala
     public override void OnJoinedRoom()
     {
         Debug.Log("Player " + PhotonNetwork.NickName + " joined room"); // Loga uma mensagem no console
-        menuManager.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
-        menuManager.SetStartButton(PhotonNetwork.IsMasterClient); // Define o botão de iniciar se o jogador for o mestre da sala
+        MenuManager.instance.UpdatePlayerList(GetPlayerList()); // Atualiza a lista de jogadores no menuManager
+        MenuManager.instance.SetStartButton(PhotonNetwork.IsMasterClient); // Define o botão de iniciar se o jogador for o mestre da sala
     }
-
+    
     // Método para carregar uma cena
     public void LoadScene(string sceneName)
     {
@@ -113,5 +111,5 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         return list; // Retorna a lista de jogadores
-    }*/
+    }
 }
