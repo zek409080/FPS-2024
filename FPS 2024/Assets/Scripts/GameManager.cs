@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void CreatePlayer()
     {
         PlayerController player = PhotonNetwork.Instantiate(playerPrefabPath, new Vector3(30, 1, 30), Quaternion.identity).GetComponent<PlayerController>();
+        player.photonView.RPC("Initialize", RpcTarget.All);
     }
 
     [PunRPC]
