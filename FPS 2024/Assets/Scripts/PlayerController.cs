@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviourPun
         characterController = GetComponent<CharacterController>();
         camTransform = GetComponentInChildren<Camera>().transform;
         playerGravity = GetComponent<PlayerGravity>();
+        weapon = GetComponentInChildren<Weapon>();
     }
 
     [PunRPC]
@@ -75,14 +76,14 @@ public class PlayerController : MonoBehaviourPun
             shooting = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.C))
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             shooting = false;
         }
 
         Movement();
         Rotation();
-        //Fire();
+        Fire();
         }
     }
 
