@@ -99,6 +99,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel(sceneName); // Carrega a cena especificada
     }
 
+    public GameObject Instantiate(string prefabName, Vector3 position, Quaternion rotation)
+    {
+        return PhotonNetwork.Instantiate(prefabName, position, rotation);
+    }
+
     // Método para obter a lista de jogadores como string
     public string GetPlayerList()
     {
