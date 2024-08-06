@@ -27,6 +27,12 @@ public class PlayerController : MonoBehaviourPun
 
     bool controllerOn = true;
 
+    [SerializeField]Camera cam;
+    public float normalFov = 60f;
+    public float aimFov = 30f;
+    public float zoomSpeed = 10f;
+
+    UIManager manager;
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -34,6 +40,7 @@ public class PlayerController : MonoBehaviourPun
         camTransform = GetComponentInChildren<Camera>().transform;
         playerGravity = GetComponent<PlayerGravity>();
         weapon = GetComponentInChildren<Weapon>();
+        manager = GetComponentInChildren<UIManager>();
     }
 
     [PunRPC]
@@ -44,6 +51,8 @@ public class PlayerController : MonoBehaviourPun
             GetComponentInChildren<Camera>().enabled = false;
             controllerOn = false;
         }
+        cam = GetComponentInChildren<Camera>();
+        cam.fieldOfView = normalFov;
     }
 
     // Update is called once per frame
@@ -56,7 +65,16 @@ public class PlayerController : MonoBehaviourPun
         camDirection.x = Input.GetAxis("Mouse X");
         camDirection.y = Input.GetAxis("Mouse Y");
 
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetMouseButton(1)) // Botão direito do mouse
+        {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, aimFov, zoomSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, normalFov, zoomSpeed * Time.deltaTime);
+        }
+            if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
@@ -106,7 +124,6 @@ public class PlayerController : MonoBehaviourPun
         camTransform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
         transform.Rotate(Vector3.up * camDirection.x);
     }
-
     void Fire()
     {
         if(shooting)
@@ -127,12 +144,8 @@ public class PlayerController : MonoBehaviourPun
 
     void ThrowGrenade()
     {
-        GameObject grenade = Instantiate(grenadePrefab, throwPoint.position, camTransform.rotation);
-
+        Granade grenade = NetworkManager.instance.Instantiate("Prefabs/Grenade", throwPoint.position, camTransform.rotation).GetComponent<Granade>();
         Vector3 throwForce = transform.up * throwForceUp + camTransform.forward * throwForceForward;
-
-        grenade.GetComponent<Rigidbody>().AddForce(throwForce, ForceMode.Impulse);
-
-        Destroy(grenade, 10);
+        grenade.photonView.RPC("Initialize", RpcTarget.All, throwForce);
     }
 }

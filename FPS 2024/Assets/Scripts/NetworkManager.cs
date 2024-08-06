@@ -28,7 +28,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #endregion
 
-    
+    [SerializeField] WeaponData weaponData;
     // Método chamado antes do primeiro frame de atualização
     void Start()
     {
@@ -49,6 +49,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = nickname; // Define o apelido do jogador
         PhotonNetwork.JoinRoom(roomName); // Tenta entrar na sala especificada
     }
+
+
     
     // Método para criar uma sala com um nome de sala e apelido
     public void CreateRoom(string roomName, string nickname)
@@ -98,6 +100,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LoadLevel(sceneName); // Carrega a cena especificada
     }
+    
+    public GameObject Instantiate(string prefabName, Vector3 position, Quaternion rotation)
+    {
+        return PhotonNetwork.Instantiate(prefabName, position, rotation);
+    }
+
+    
+    
 
     // Método para obter a lista de jogadores como string
     public string GetPlayerList()

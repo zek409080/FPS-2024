@@ -2,6 +2,8 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -25,18 +27,32 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     const string playerPrefabPath = "Prefabs/Player";
 
+    [SerializeField]UIManager manager;
+
     int playersInGame;
     List<PlayerController> playerList = new List<PlayerController>();
     PlayerController playerLocal;
 
+    
+
     private void Start()
     {
         photonView.RPC("AddPlayer", RpcTarget.AllBuffered);
+        timer = timerbase;
+
+    }
+    private void Update()
+    {
+        if(SceneManager.GetActiveScene().name == "SampleScene")
+        {
+            photonView.RPC("TimerGameOverRPC", RpcTarget.All);
+        }   
+        
     }
 
     private void CreatePlayer()
     {
-        PlayerController player = PhotonNetwork.Instantiate(playerPrefabPath, new Vector3(30, 1, 30), Quaternion.identity).GetComponent<PlayerController>();
+        PlayerController player = NetworkManager.instance.Instantiate(playerPrefabPath, new Vector3(30, 1, 30), Quaternion.identity).GetComponent<PlayerController>();
         player.photonView.RPC("Initialize", RpcTarget.All);
     }
 
@@ -47,6 +63,20 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playersInGame == PhotonNetwork.PlayerList.Length)
         {
             CreatePlayer();
+        }
+    }
+
+    [SerializeField] float timerbase;
+    float timer;
+
+    [PunRPC]
+    void TimerGameOverRPC()
+    {
+        timer -= Time.deltaTime;
+        manager.UpdateTextTimer(timer);
+        if (timer < 0)
+        {
+            Time.timeScale = 0;
         }
     }
 }

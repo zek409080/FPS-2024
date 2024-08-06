@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SocialPlatforms.Impl;
 
 // Define a classe MenuManager que herda de MonoBehaviour, permitindo que seja usada como um componente em GameObjects.
 public class MenuManager : MonoBehaviour
